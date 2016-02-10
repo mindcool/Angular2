@@ -19,6 +19,15 @@ class Article {
 	voteDown():void {
 		this.votes -= 1;
 	}
+	
+	domain():string{
+		try {
+			const link:string = this.link.split('//')[1];
+			return link.split('/')[0];
+		} catch(err) {
+			return null;
+		}
+	}
 }
 
 @Component({
@@ -43,6 +52,7 @@ class Article {
       <a class="ui large header" href="{{ article.link }}">
         {{ article.title }}
       </a>
+	  <div class="meta">({{ article.domain() }})</div>
       <ul class="ui big horizontal list voters">
         <li class="item">
           <a href (click)="voteUp()">
@@ -111,14 +121,17 @@ class RedditApp {
 	articles: Article[];
 	
 	constructor(){
-		this.articles = [	new Article('Angular 2', 'angular.io', 3),
-							new Article('Red Team Field Manual', 'rtfm.com', 5),
-							new Article('MongoDB','mongodb.org',12)
+		this.articles = [	new Article('Angular 2', 'http://angular.io', 3),
+							new Article('Red Team Field Manual', 'http://rtfm.com', 5),
+							new Article('MongoDB','http://mongodb.org',12)
 		];
 	}
 	//Please do not forget both title and link are HTML Input Objects
 	addArticle(title:HTMLInputElement, link:HTMLInputElement):void {
 		console.log(`Adding article title: ${title.value} and link: ${link.value}`);
+		this.articles.push(new Article(title.value, link.value, 0));
+		title.value = '';
+		link.value = '';
 	}
 }
 
